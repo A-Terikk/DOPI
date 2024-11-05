@@ -64,7 +64,7 @@ def save_path():
         path_entry.delete("0", END)
         path_entry.insert("0", path)
         path_entry.configure(state="readonly")
-        message_text = "Speicherpfad geändert"
+        message_text = "Speicherpfad gesetzt"
         message.configure(state="normal")
         message.delete(1.0, END)
         message.insert(END, message_text)
@@ -560,7 +560,6 @@ load_path()
 first_path()
 path_entry.insert("0", target_folder)
 path_entry.configure(state="readonly")
-create_database()
 read_data()
 
 # Start GUI loop
