@@ -34,7 +34,6 @@ pytesseract.pytesseract.tesseract_cmd = os.path.join(os.path.dirname(__file__), 
 file = ""
 search = ""
 target_folder = ""
-#database_path = os.path.join(target_folder, "DOPI2.db")
 
 
 def first_path():
