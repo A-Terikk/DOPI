@@ -1,3 +1,22 @@
+"""
+Project: DOPI (Document Organizer for PDFs and Images)
+Author: Artur Ikkert
+Version: 1.0
+Date: 05.11.2024
+
+Description:
+------------
+DoPI ist ein Dokumentenorganisator, der PDF- und Bilddateien effizient verwaltet und organisiert.
+Es enthält Funktionen zur Texterkennung (OCR) in Bildern, Dokumenten-Tagging und Filtermöglichkeiten,
+um Dokumente leichter zu durchsuchen und abzurufen.
+
+Requirements:
+-------------
+- Python 3.x
+- Tesseract OCR (Portable-Version im Repository integriert)
+- Zusätzliche Python-Bibliotheken (siehe requirements.txt)
+"""
+
 import shutil
 import json
 from customtkinter import *
