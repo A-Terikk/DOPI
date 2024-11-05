@@ -417,7 +417,8 @@ root.geometry(f"{app_width}x{app_height}+{(root.winfo_screenwidth() - app_width)
               f"{(root.winfo_screenheight() - app_height) // 2}")
 
 # Tab groups
-tabview = CTkTabview(master=root)
+tabview = CTkTabview(master=root, segmented_button_fg_color="#404245", segmented_button_unselected_color="#404245",
+                     segmented_button_unselected_hover_color="#565B5E")
 tabview.pack(fill="both", expand=True)
 tabview.add("Dokument scannen")
 tabview.add("Übersicht")
@@ -433,11 +434,13 @@ scan_frame = CTkFrame(master=tabview.tab("Dokument scannen"))
 scan_frame.pack(fill="both", expand=True, padx=20, pady=(50, 0), side="left")
 
 # Segment Button
-segment_type = CTkSegmentedButton(master=sidebar_frame, values=["PDF", "IMG"], command=segment_event)
+segment_type = CTkSegmentedButton(master=sidebar_frame, values=["PDF", "IMG"], command=segment_event,
+                                  fg_color="#404245", unselected_color="#404245", unselected_hover_color="#565B5E")
 segment_type.set("PDF")
 segment_type.pack(fill="x", padx=20, pady=10)
 
-segment_archiv = CTkSegmentedButton(master=sidebar_frame, values=["Copy", "Move"])
+segment_archiv = CTkSegmentedButton(master=sidebar_frame, values=["Copy", "Move"], fg_color="#404245",
+                                    unselected_color="#404245", unselected_hover_color="#565B5E")
 segment_archiv.set("Copy")
 segment_archiv.pack(fill="x", padx=20, pady=10)
 
