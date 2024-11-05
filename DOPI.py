@@ -320,7 +320,7 @@ def open_file():
         messagebox.showwarning("Keine Auswahl", "Bitte eine Zeile auswählen.")
         return
     item_values = tree.item(selected_item)['values']
-    file_path = os.path.join("Archiv", item_values[1])
+    file_path = os.path.join(target_folder, item_values[1])
 
     if os.path.exists(file_path):
         try:
