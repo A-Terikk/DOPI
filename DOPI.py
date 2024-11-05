@@ -240,12 +240,17 @@ def read_data():
     for row in tree.get_children():
         tree.delete(row)
 
+    count = 0
     for row_data in data:
         single_row = []
         for column_data in row_data:
             column_data = str(column_data).replace("\n", "")
             single_row.append(column_data)
-        tree.insert("", "end", values=single_row)
+        if count % 2 == 0:
+            tree.insert("", "end", values=single_row, tags=("evenrow", ))
+        else:
+            tree.insert("", "end", values=single_row, tags=("oddrow",))
+        count += 1
     connection.close()
 
 
@@ -263,13 +268,18 @@ def search_document(event):
         for row in tree.get_children():
             tree.delete(row)
 
+        count = 0
         for row_data in data:
             single_row = []
             for column_data in row_data:
                 # Write content in one line and shorten
                 column_data = str(column_data).replace("\n", "")[0:300]
                 single_row.append(column_data)
-            tree.insert("", "end", values=single_row)
+            if count % 2 == 0:
+                tree.insert("", "end", values=single_row, tags=("evenrow",))
+            else:
+                tree.insert("", "end", values=single_row, tags=("oddrow",))
+            count += 1
         connection.close()
     else:
         read_data()
@@ -497,7 +507,7 @@ top_frame.pack(fill="x", padx=20, pady=(20, 0))
 
 # Frame for the Treeview table
 table_frame = CTkFrame(master=tabview.tab("Übersicht"))
-table_frame.pack(expand=True, fill="both", padx=20, pady=20)
+table_frame.pack(expand=True, fill="both", padx=(20, 0), pady=20)
 
 # Creating the treeview table
 tree = ttk.Treeview(master=table_frame, columns=[f"Col{i}" for i in range(0, 6)], show="headings", selectmode="browse",
@@ -506,8 +516,8 @@ tree.column(1, minwidth=150, width=200)
 tree.column(2, minwidth=150, width=200)
 tree.column(3, minwidth=150, width=200)
 tree.column(4, minwidth=70, width=70)
-tree.column(5, minwidth=200, width=550)
-tree.pack(expand=True, fill="both", side="left")
+tree.column(5, minwidth=200, width=540)
+tree.pack(expand=False, fill="both", side="left")
 
 # Headings of the table
 tree.heading(1, text="Name")
@@ -531,6 +541,9 @@ style.configure("Treeview.Heading", background="#1F6AA5", foreground="#DCE4EE", 
 # Change selected color
 style.map("Treeview", background=[("selected", "#144870")])
 style.map("Treeview.Heading", background=[("active", "#144870")])
+# Create striped row tags
+tree.tag_configure("oddrow", background="#404040")
+tree.tag_configure("evenrow", background="#333333")
 
 # Button for opening the file from the selected line
 open_button = CTkButton(master=top_frame, text="Datei öffnen", corner_radius=32, command=open_file, state="disabled")
@@ -542,7 +555,7 @@ delete_button.grid(row=0, column=1, padx=5, pady=10, sticky="w")
 
 # Search field for the database
 search_field_entry = CTkEntry(master=top_frame, placeholder_text="Suche...")
-search_field_entry.grid(row=0, column=2, padx=(100, 20), pady=10, sticky="ew")
+search_field_entry.grid(row=0, column=2, padx=(100, 0), pady=10, sticky="ew")
 
 # Grid configuration for the Top_Frame
 top_frame.grid_rowconfigure(0, weight=1)
