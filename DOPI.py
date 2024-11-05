@@ -34,6 +34,14 @@ pytesseract.pytesseract.tesseract_cmd = os.path.join(os.path.dirname(__file__), 
 file = ""
 search = ""
 target_folder = ""
+#database_path = os.path.join(target_folder, "DOPI2.db")
+
+
+def first_path():
+    if not target_folder:
+        messagebox.showinfo("Pfad", "Vor der ersten Benutzung muss ein Speicherpfad für die Dateien "
+                                    "ausgewählt werden")
+        save_path()
 
 
 # Loading and saving the path in the configuration file
@@ -62,11 +70,13 @@ def save_path():
         message.delete(1.0, END)
         message.insert(END, message_text)
         message.configure(text_color="#75F94D", state="disabled")
+        create_database()
+        read_data()
 
 
 # Initialisation of the database
 def create_database():
-    connection = sqlite3.connect('DoPI.db')
+    connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
     cursor = connection.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS documents (
@@ -83,7 +93,7 @@ def create_database():
 
 # Insert and update data
 def insert_data(name, keyword1, keyword2, date, content, segment_archiv):
-    connection = sqlite3.connect('DoPI.db')
+    connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM documents WHERE name = ?', (name,))
     existing_data = cursor.fetchone()
@@ -223,7 +233,7 @@ def clear():
 
 # Read out data and insert into the treeview
 def read_data():
-    connection = sqlite3.connect("DoPI.db")
+    connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM documents ORDER BY id DESC")
     data = cursor.fetchall()
@@ -245,7 +255,7 @@ def search_document(event):
     global search
     search = search_field_entry.get().lower()
     if search:
-        connection = sqlite3.connect("DoPI.db")
+        connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
         cursor = connection.cursor()
         cursor.execute('''SELECT * FROM documents WHERE LOWER(name) LIKE ? OR LOWER(keyword1) LIKE ? OR 
                           LOWER(keyword2) LIKE ? OR LOWER(date) LIKE ? OR LOWER(content) LIKE ? 
@@ -321,7 +331,7 @@ def on_row_click(event):
     selected_item = tree.focus()
     if selected_item:
         row_values = tree.item(selected_item)['values']
-        connection = sqlite3.connect("DoPI.db")
+        connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
         cursor = connection.cursor()
         cursor.execute("SELECT name, keyword1, keyword2, date, content FROM documents WHERE name = ?",
                        (row_values[1],))
@@ -358,7 +368,7 @@ def delete():
                                  f"Möchten Sie\n '{item_values[1]}'\n wirklich löschen?")
     if not result:
         return
-    connection = sqlite3.connect("DoPI.db")
+    connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
     cursor = connection.cursor()
     cursor.execute('DELETE FROM documents WHERE name = ?', (item_values[1],))
     connection.commit()
@@ -547,10 +557,11 @@ search_field_entry.bind("<KeyRelease>", search_document)
 tree.bind("<<TreeviewSelect>>", button_state)
 
 # Initialisation
-create_database()
 load_path()
+first_path()
 path_entry.insert("0", target_folder)
 path_entry.configure(state="readonly")
+create_database()
 read_data()
 
 # Start GUI loop
