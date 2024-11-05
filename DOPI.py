@@ -345,7 +345,7 @@ def delete():
     connection.commit()
     connection.close()
 
-    file_path = os.path.join("Archiv", item_values[1])
+    file_path = os.path.join(target_folder, item_values[1])
     if os.path.exists(file_path):
         try:
             os.remove(file_path)
