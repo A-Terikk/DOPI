@@ -536,14 +536,14 @@ tree.configure(yscrollcommand=ctk_textbox_scrollbar.set)
 style = ttk.Style()
 style.theme_use("alt")
 # Config the treeview colors
-style.configure("Treeview", background="#333333", foreground="#DCE4EE", rowheight=50, fieldbackground="#333333")
+style.configure("Treeview", background="#343638", foreground="#DCE4EE", rowheight=50, fieldbackground="#343638")
 style.configure("Treeview.Heading", background="#1F6AA5", foreground="#DCE4EE", rowheight=75)
 # Change selected color
 style.map("Treeview", background=[("selected", "#144870")])
 style.map("Treeview.Heading", background=[("active", "#144870")])
 # Create striped row tags
-tree.tag_configure("oddrow", background="#404040")
-tree.tag_configure("evenrow", background="#333333")
+tree.tag_configure("oddrow", background="#404245")
+tree.tag_configure("evenrow", background="#343638")
 
 # Button for opening the file from the selected line
 open_button = CTkButton(master=top_frame, text="Datei öffnen", corner_radius=32, command=open_file, state="disabled")
