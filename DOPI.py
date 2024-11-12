@@ -20,7 +20,7 @@ Requirements:
 import shutil
 import json
 from customtkinter import *
-import cv2
+from PIL import Image
 import pytesseract
 from pypdf import PdfReader
 import sqlite3
@@ -135,13 +135,12 @@ def open_image():
     global file
     file = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg")])
     if file:
-        image = cv2.imread(file)
         image_file_name = os.path.basename(file)
         name_entry.configure(state="normal")
         name_entry.delete("0", END)
         name_entry.insert("0", image_file_name)
         name_entry.configure(state="disabled")
-        text = pytesseract.image_to_string(image)
+        text = pytesseract.image_to_string(Image.open(file))
         return text
 
 
@@ -293,7 +292,7 @@ def show_popup(content, x, y):
     popup.focus_force()  # Sets the focus on the pop-up
 
     # List of column names (without ID)
-    column_names = ["Name", "Stichwort 1", "Stichwort 2", "Datum", "Inhalt"]
+    column_names = ["Name", "Schlagwort 1", "Schlagwort 2", "Datum", "Inhalt"]
     # Formatted content: Column name + cell value for each row
     formatted_content = ""
     for row in content:
@@ -408,7 +407,7 @@ def button_state(event):
 
 # Creating the GUI
 root = CTk()
-root.title("Dokumenten-Manager")
+root.title("DOPI")
 app_width, app_height = 1280, 800
 set_appearance_mode("dark")
 root.resizable(False, False)
@@ -471,12 +470,12 @@ name_entry = CTkEntry(master=scan_frame, width=600, placeholder_text="Wird autom
 name_entry.configure(state="disabled")
 name_entry.grid(row=1, column=1, padx=10, pady=10)
 
-keyword1_label = CTkLabel(master=scan_frame, text="Stichwort")
+keyword1_label = CTkLabel(master=scan_frame, text="Schlagwort")
 keyword1_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 keyword1_entry = CTkEntry(master=scan_frame, width=600)
 keyword1_entry.grid(row=2, column=1, padx=10, pady=10)
 
-keyword2_label = CTkLabel(master=scan_frame, text="Stichwort")
+keyword2_label = CTkLabel(master=scan_frame, text="Schlagwort")
 keyword2_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
 keyword2_entry = CTkEntry(master=scan_frame, width=600)
 keyword2_entry.grid(row=3, column=1, padx=10, pady=10)
@@ -524,8 +523,8 @@ tree.pack(expand=False, fill="both", side="left")
 
 # Headings of the table
 tree.heading(1, text="Name")
-tree.heading(2, text="Stichwort")
-tree.heading(3, text="Stichwort")
+tree.heading(2, text="Schlagwort")
+tree.heading(3, text="Schlagwort")
 tree.heading(4, text="Datum")
 tree.heading(5, text="Inhalt")
 
