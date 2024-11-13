@@ -271,15 +271,11 @@ def search_document(event):
         search_patterns = []
         for term in search_terms:
             search_patterns.extend([f"%{term}%"] * 5)
-
         # Execute SQL query and retrieve results
         cursor.execute(query, search_patterns)
         data = cursor.fetchall()
-
-
         for row in tree.get_children():
             tree.delete(row)
-
         count = 0
         for row_data in data:
             single_row = []
@@ -303,7 +299,6 @@ def show_popup(content, x, y):
     popup.overrideredirect(True)  # Remove window frames
     popup.geometry(f"{int(x)}+{int(y)}")
     popup.focus_force()  # Sets the focus on the pop-up
-
     # List of column names (without ID)
     column_names = ["Name", "Schlagwort 1", "Schlagwort 2", "Datum", "Inhalt"]
     # Formatted content: Column name + cell value for each row
@@ -336,7 +331,6 @@ def show_popup(content, x, y):
 # Highlight searched text
 def highlight_text(popup_text_box, search):
     search_terms = search.split()
-
     for term in search_terms:
         start = "1.0"  # Start position: first line, first character
         while True:
