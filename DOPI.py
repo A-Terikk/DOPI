@@ -258,12 +258,25 @@ def search_document(event):
     global search
     search = search_field_entry.get().lower()
     if search:
+        # Separate the search terms with spaces
+        search_terms = search.split()
         connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
         cursor = connection.cursor()
-        cursor.execute('''SELECT * FROM documents WHERE LOWER(name) LIKE ? OR LOWER(keyword1) LIKE ? OR 
-                          LOWER(keyword2) LIKE ? OR LOWER(date) LIKE ? OR LOWER(content) LIKE ? 
-                          ORDER BY id DESC''', (f'%{search}%',) * 5)
+        # Create dynamic SQL query for multiple search words
+        query = "SELECT * FROM documents WHERE " + " AND ".join(
+            ["(LOWER(name) LIKE ? OR LOWER(keyword1) LIKE ? OR LOWER(keyword2) LIKE ? OR LOWER(date) "
+             "LIKE ? OR LOWER(content) LIKE ?)"] * len(search_terms)
+        ) + " ORDER BY id DESC"
+        print(query)
+        search_patterns = []
+        for term in search_terms:
+            search_patterns.extend([f"%{term}%"] * 5)
+
+        # Execute SQL query and retrieve results
+        cursor.execute(query, search_patterns)
         data = cursor.fetchall()
+
+
         for row in tree.get_children():
             tree.delete(row)
 
@@ -322,15 +335,18 @@ def show_popup(content, x, y):
 
 # Highlight searched text
 def highlight_text(popup_text_box, search):
-    start = "1.0"  # Start position: first line, first character
-    while True:
-        start = popup_text_box.search(search, start, stopindex="end", nocase=True)
-        if not start:
-            break
-        end = f"{start}+{len(search)}c"  # "c" = characters. For the calculation of the end position
-        popup_text_box.tag_add("highlight", start, end)
-        start = end  # Updates start to the end position so that the next search begins after it.
-    popup_text_box.tag_config("highlight", background="#144870", foreground="#DCE4EE", font=("Arial", 13, "bold"))
+    search_terms = search.split()
+
+    for term in search_terms:
+        start = "1.0"  # Start position: first line, first character
+        while True:
+            start = popup_text_box.search(term, start, stopindex="end", nocase=True)
+            if not start:
+                break
+            end = f"{start}+{len(term)}c"  # "c" = characters. For the calculation of the end position
+            popup_text_box.tag_add("highlight", start, end)
+            start = end  # Updates start to the end position so that the next search begins after it.
+        popup_text_box.tag_config("highlight", background="#144870", foreground="#DCE4EE", font=("Arial", 13, "bold"))
 
 
 # Open popup for the double-clicked line
