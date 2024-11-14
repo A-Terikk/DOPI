@@ -79,7 +79,7 @@ def create_database():
     cursor = connection.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS documents (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY, AUTOINCREMENT,
         name TEXT UNIQUE,
         keyword1 TEXT,
         keyword2 TEXT,
