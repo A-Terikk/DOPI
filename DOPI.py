@@ -6,7 +6,7 @@ Date: 05.11.2024
 
 Description:
 ------------
-DoPI ist ein Dokumentenorganisator, der PDF- und Bilddateien effizient verwaltet und organisiert.
+DOPI ist ein Dokumentenorganisator, der PDF- und Bilddateien effizient verwaltet und organisiert.
 Es enthält Funktionen zur Texterkennung (OCR) in Bildern, Dokumenten-Tagging und Filtermöglichkeiten,
 um Dokumente leichter zu durchsuchen und abzurufen.
 
@@ -20,12 +20,13 @@ Requirements:
 import shutil
 import json
 from customtkinter import *
+from CTkMessagebox import CTkMessagebox
 from PIL import Image
 import pytesseract
 from pypdf import PdfReader
 import sqlite3
 import tkinter as tk
-from tkinter import filedialog, ttk, messagebox
+from tkinter import filedialog, ttk
 
 # Reference to the local Tesseract directory
 pytesseract.pytesseract.tesseract_cmd = os.path.join(os.path.dirname(__file__), 'tesseract', 'tesseract.exe')
@@ -37,9 +38,13 @@ target_folder = ""
 
 
 def first_path():
-    if not target_folder:
-        messagebox.showinfo("Pfad", "Vor der ersten Benutzung muss ein Speicherpfad für die Dateien "
-                                    "ausgewählt werden")
+    while not target_folder:
+        folder_selection = CTkMessagebox(title="Pfad wählen", message="Vor der ersten Benutzung muss ein Speicherpfad "
+                                         "für die Dateien ausgewählt werden.", option_1="Beenden",
+                                         option_2="Pfad wählen", width=400, wraplength=280, button_width=100,
+                                         cancel_button="none")
+        if folder_selection.get() == "Beenden":
+            exit()
         save_path()
 
 
@@ -79,7 +84,7 @@ def create_database():
     cursor = connection.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS documents (
-        id INTEGER PRIMARY KEY, AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         name TEXT UNIQUE,
         keyword1 TEXT,
         keyword2 TEXT,
@@ -99,10 +104,10 @@ def insert_data(name, keyword1, keyword2, date, content, segment_archiv):
 
     # Check whether the file already exists
     if existing_data:
-        result = messagebox.askyesno("Konflikt",
-                                     f"Ein Dokument mit dem Namen\n'{name}'\n"
-                                     f"existiert bereits. Möchten Sie die Inhalte ersetzen?")
-        if not result:
+        result = CTkMessagebox(title="Konflikt", message=f"Ein Dokument mit dem Namen\n'{name}'\nexistiert bereits. "
+                               f"Möchten Sie die Inhalte ersetzen?", option_1="Nein", option_2="Ja", width=450,
+                               wraplength=370, button_width=100, cancel_button="none")
+        if result.get() == "Nein":
             connection.close()
             return
 
@@ -233,12 +238,25 @@ def clear():
 def read_data():
     connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM documents ORDER BY id DESC")
+    try:
+        cursor.execute("SELECT * FROM documents ORDER BY id DESC")
+    except:
+        new_path = False
+        while not new_path:
+            change_path = CTkMessagebox(title="Keine Datenbank vorhanden", message="Im Speicherpfad befindet sich "
+                                        "keine Datenbank mehr.\nBitte bestätigen Sie den Pfad, um eine neue Datenbank "
+                                        "zu erstellen oder wählen Sie einen anderen Pfad.\nVorhandene Dateien werden "
+                                        "nicht automatisch in die neue Datenbank übernommen!", option_1="Beenden",
+                                        option_2="Pfad wählen", width=600, wraplength=500, button_width=100,
+                                        icon="warning", cancel_button="none")
+            if change_path.get() == "Beenden":
+                exit()
+            save_path()
+            new_path = True
     data = cursor.fetchall()
     # Delete previous data in the treeview
     for row in tree.get_children():
         tree.delete(row)
-
     count = 0
     for row_data in data:
         single_row = []
@@ -267,7 +285,6 @@ def search_document(event):
             ["(LOWER(name) LIKE ? OR LOWER(keyword1) LIKE ? OR LOWER(keyword2) LIKE ? OR LOWER(date) "
              "LIKE ? OR LOWER(content) LIKE ?)"] * len(search_terms)
         ) + " ORDER BY id DESC"
-        print(query)
         search_patterns = []
         for term in search_terms:
             search_patterns.extend([f"%{term}%"] * 5)
@@ -363,28 +380,27 @@ def on_row_click(event):
 # Open file
 def open_file():
     selected_item = tree.focus()
-    if not selected_item:
-        messagebox.showwarning("Keine Auswahl", "Bitte eine Zeile auswählen.")
-        return
     item_values = tree.item(selected_item)['values']
     file_path = os.path.join(target_folder, item_values[1])
-
     if os.path.exists(file_path):
         try:
             os.startfile(file_path)
         except Exception as e:
-            messagebox.showerror("Fehler", f"Die Datei konnte nicht geöffnet werden: {e}")
+            CTkMessagebox(title="Fehler", message=f"Die Datei konnte nicht geöffnet werden: {e}", icon="cancel",
+                          width=350, wraplength=280, cancel_button="none")
     else:
-        messagebox.showerror("Datei nicht gefunden", "Die angegebene Datei existiert nicht.")
+        CTkMessagebox(title="Datei nicht gefunden", message="Die angegebene Datei existiert nicht.", icon="cancel",
+                      width=350, wraplength=280, cancel_button="none")
 
 
 # Delete file
 def delete():
     selected_item = tree.focus()
     item_values = tree.item(selected_item)['values']
-    result = messagebox.askyesno("Konflikt",
-                                 f"Möchten Sie\n '{item_values[1]}'\n wirklich löschen?")
-    if not result:
+    result = CTkMessagebox(title="Konflikt", message=f"Möchten Sie\n '{item_values[1]}'\n wirklich löschen?",
+                           option_1="Nein", option_2="Ja", width=350, wraplength=250, button_width=100,
+                           icon="warning", cancel_button="none")
+    if result.get() == "Nein":
         return
     connection = sqlite3.connect(os.path.join(target_folder, "DOPI.db"))
     cursor = connection.cursor()
@@ -397,11 +413,11 @@ def delete():
         try:
             os.remove(file_path)
         except Exception as e:
-            messagebox.showerror("Fehler", f"Die Datei konnte nicht gelöscht werden: {e}")
+            CTkMessagebox(title="Fehler", message=f"Die Datei konnte nicht gelöscht werden: {e}", icon="cancel")
     else:
-        messagebox.showerror("Datei nicht gefunden",
-                             f"Die Datei\n'{item_values[1]}' \nwurde bereits gelöscht."
-                             f"\nDie Datenbankeinträge wurden entfernt.")
+        CTkMessagebox(title="Datei nicht gefunden", message=f"Die Datei\n'{item_values[1]}' \nwurde bereits gelöscht."
+                      f"\nDie Datenbankeinträge wurden entfernt.", width=400, wraplength=280, button_width=100,
+                      cancel_button="none")
     read_data()
     search_document(search_field_entry)
 
