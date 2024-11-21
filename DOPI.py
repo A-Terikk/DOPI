@@ -37,17 +37,6 @@ search = ""
 target_folder = ""
 
 
-def first_path():
-    while not target_folder:
-        folder_selection = CTkMessagebox(title="Pfad wählen", message="Vor der ersten Benutzung muss ein Speicherpfad "
-                                         "für die Dateien ausgewählt werden.", option_1="Beenden",
-                                         option_2="Pfad wählen", width=400, wraplength=280, button_width=100,
-                                         cancel_button="none")
-        if folder_selection.get() == "Beenden":
-            exit()
-        save_path()
-
-
 # Loading and saving the path in the configuration file
 def load_path():
     global target_folder
@@ -93,6 +82,17 @@ def create_database():
     ''')
     connection.commit()
     connection.close()
+
+
+def first_path():
+    while not target_folder:
+        folder_selection = CTkMessagebox(title="Pfad wählen", message="Vor der ersten Benutzung muss ein Speicherpfad "
+                                         "für die Dateien ausgewählt werden.", option_1="Beenden",
+                                         option_2="Pfad wählen", width=400, wraplength=280, button_width=100,
+                                         cancel_button="none")
+        if folder_selection.get() == "Beenden":
+            exit()
+        save_path()
 
 
 # Insert and update data
