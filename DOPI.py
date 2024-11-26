@@ -329,7 +329,7 @@ def show_popup(content, x, y):
             if i == 3:
                 formatted_content += "\n"
 
-    text_box = tk.Text(popup, width=70, height=18, wrap="word", font=("Arial", 13), background="#2B2B2B",
+    text_box = tk.Text(popup, width=70, height=23, wrap="word", font=("Arial", 13), background="#2B2B2B",
                        foreground="#DCE4EE", border="0")
     scrollbar = CTkScrollbar(popup, command=text_box.yview, fg_color="#2B2B2B")
     scrollbar.pack(side="right", fill="y")
@@ -372,7 +372,7 @@ def on_row_click(event):
                        (row_values[1],))
         content = cursor.fetchall()
         # Position of the popup
-        x, y = table_frame.winfo_rootx() + 290, table_frame.winfo_rooty() + 24
+        x, y = table_frame.winfo_rootx() + 290, table_frame.winfo_rooty() + 21
         connection.close()
         show_popup(content, x, y)
 
@@ -474,7 +474,7 @@ scan_button = CTkButton(master=sidebar_frame, text="Öffnen", corner_radius=32, 
 scan_button.pack(padx=20, pady=10)
 
 # Button for clearing the keywords
-clear_button = CTkButton(master=sidebar_frame, text="Stichwörter leeren", corner_radius=32, command=clear)
+clear_button = CTkButton(master=sidebar_frame, text="Schlagworte leeren", corner_radius=32, command=clear)
 clear_button.pack(padx=20, pady=10)
 
 # Button for inserting into the database
