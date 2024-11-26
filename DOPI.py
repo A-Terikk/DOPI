@@ -91,7 +91,7 @@ def first_path():
                                          option_2="Pfad wählen", width=400, wraplength=280, button_width=100,
                                          cancel_button="none")
         if folder_selection.get() == "Beenden":
-            exit()
+            sys.exit()
         save_path()
 
 
@@ -112,8 +112,8 @@ def insert_data(name, keyword1, keyword2, date, content, segment_archiv):
             return
 
     # Data is only overwritten if the copy process was successful
-    archiviert = archive(file, target_folder, segment_archiv)
-    if archiviert:
+    copied = archive(file, target_folder, segment_archiv)
+    if copied:
         # If the file already exists, the data is overwritten (Upsert (Update or Insert))
         cursor.execute('''
                 INSERT INTO documents (name, keyword1, keyword2, date, content)
