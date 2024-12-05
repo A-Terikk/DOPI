@@ -261,7 +261,7 @@ def read_data():
     for row_data in data:
         single_row = []
         for column_data in row_data:
-            column_data = str(column_data).replace("\n", "")
+            column_data = str(column_data).replace("\n", "")[0:300]
             single_row.append(column_data)
         if count % 2 == 0:
             tree.insert("", "end", values=single_row, tags=("evenrow", ))
