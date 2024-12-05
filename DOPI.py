@@ -545,7 +545,7 @@ tree.column(2, minwidth=150, width=200)
 tree.column(3, minwidth=150, width=200)
 tree.column(4, minwidth=70, width=70)
 tree.column(5, minwidth=200, width=540)
-tree.pack(expand=False, fill="both", side="left")
+tree.pack(expand=True, fill="both", side="left")
 
 # Headings of the table
 tree.heading(1, text="Name")
