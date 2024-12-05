@@ -2,7 +2,7 @@
 Project: DOPI (Document Organizer for PDFs and Images)
 Author: Artur Ikkert
 Version: 1.0
-Date: 05.11.2024
+Date: 05.12.2024
 
 Description:
 ------------
@@ -27,6 +27,7 @@ from pypdf import PdfReader
 import sqlite3
 import tkinter as tk
 from tkinter import filedialog, ttk
+import ctypes
 
 # Reference to the local Tesseract directory
 pytesseract.pytesseract.tesseract_cmd = os.path.join(os.path.dirname(__file__), 'tesseract', 'tesseract.exe')
@@ -35,6 +36,11 @@ pytesseract.pytesseract.tesseract_cmd = os.path.join(os.path.dirname(__file__), 
 file = ""
 search = ""
 target_folder = ""
+
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)  # Activates system-aware DPI
+except Exception:
+    pass
 
 
 # Loading and saving the path in the configuration file
@@ -440,6 +446,8 @@ root.resizable(False, False)
 # Place window in the centre of the screen
 root.geometry(f"{app_width}x{app_height}+{(root.winfo_screenwidth() - app_width) // 2}+"
               f"{(root.winfo_screenheight() - app_height) // 2}")
+# Dynamic adjustment of the scaling
+root.tk.call("tk", "scaling", root.winfo_fpixels('1i') / 72)
 
 # Tab groups
 tabview = CTkTabview(master=root, segmented_button_fg_color="#404245", segmented_button_unselected_color="#404245",
